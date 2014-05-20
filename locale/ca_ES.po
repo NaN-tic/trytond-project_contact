@@ -1,0 +1,47 @@
+# 
+msgid ""
+msgstr "Content-Type: text/plain; charset=utf-8\n"
+
+msgctxt "field:project.work,allowed_contacts:"
+msgid "Allowed Contacts"
+msgstr "Contactes permesos"
+
+msgctxt "field:project.work,contacts:"
+msgid "Contacts"
+msgstr "Contactes"
+
+msgctxt "field:project.work-party.party,create_date:"
+msgid "Create Date"
+msgstr "Data de creació"
+
+msgctxt "field:project.work-party.party,create_uid:"
+msgid "Create User"
+msgstr "Usuari de creació"
+
+msgctxt "field:project.work-party.party,id:"
+msgid "ID"
+msgstr "Identificador"
+
+msgctxt "field:project.work-party.party,party:"
+msgid "Party"
+msgstr "Tercer"
+
+msgctxt "field:project.work-party.party,rec_name:"
+msgid "Name"
+msgstr "Nom"
+
+msgctxt "field:project.work-party.party,work:"
+msgid "Work"
+msgstr "Treball"
+
+msgctxt "field:project.work-party.party,write_date:"
+msgid "Write Date"
+msgstr "Data modificació"
+
+msgctxt "field:project.work-party.party,write_uid:"
+msgid "Write User"
+msgstr "Usuari modificació"
+
+msgctxt "model:project.work-party.party,name:"
+msgid "Work"
+msgstr "Treball"

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="utf-8"?>
+<tryton>
+    <data>
+        <record model="ir.ui.view" id="work_form_view">
+            <field name="model">project.work</field>
+            <field name="type">form</field>
+            <field name="name">work_form</field>
+            <field name="inherit" ref="project.work_view_form"/>
+        </record>
+    </data>
+</tryton>
