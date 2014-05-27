@@ -21,8 +21,8 @@ class Work:
     'Work'
     __name__ = "project.work"
 
-    allowed_contacts = fields.Function(fields.One2Many('party.party',
-            None, 'Allowed Contacts', on_change_with=['party']),
+    allowed_contacts = fields.Function(fields.Many2Many('party.party',
+            None, None, 'Allowed Contacts', on_change_with=['party']),
         'on_change_with_allowed_contacts')
     contacts = fields.Many2Many('project.work-party.party', 'work',
         'party', 'Contacts',
@@ -37,6 +37,5 @@ class Work:
         res = [e.party.id for e in Employee.search([])]
         if not self.party:
             return res
-
         res.extend(r.to.id for r in self.party.relations)
         return res
