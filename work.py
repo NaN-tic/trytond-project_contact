@@ -13,7 +13,7 @@ class WorkParty(ModelSQL):
     __name__ = "project.work-party.party"
 
     work = fields.Many2One('project.work', 'Work',
-        required=True, select=True)
+        required=True, select=True, ondelete='CASCADE')
     party = fields.Many2One('party.party', 'Party', required=True, select=True)
 
 
