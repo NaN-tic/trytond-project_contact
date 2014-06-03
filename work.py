@@ -22,7 +22,7 @@ class Work:
     __name__ = "project.work"
 
     allowed_contacts = fields.Function(fields.Many2Many('party.party',
-            None, None, 'Allowed Contacts', on_change_with=['party']),
+            None, None, 'Allowed Contacts'),
         'on_change_with_allowed_contacts')
     contacts = fields.Many2Many('project.work-party.party', 'work',
         'party', 'Contacts',
@@ -31,6 +31,7 @@ class Work:
             ],
         depends=['allowed_contacts'])
 
+    @fields.depends('party')
     def on_change_with_allowed_contacts(self, name=None):
         pool = Pool()
         Employee = pool.get('company.employee')
