@@ -31,11 +31,12 @@ class Work:
             ],
         depends=['allowed_contacts'])
 
-    @fields.depends('party')
+    @fields.depends('party', methods=['party'])
     def on_change_with_allowed_contacts(self, name=None):
         pool = Pool()
         Employee = pool.get('company.employee')
         res = [e.party.id for e in Employee.search([])]
+        self.party = self.on_change_with_party()
         if not self.party:
             return res
         res.extend(r.to.id for r in self.party.relations)
