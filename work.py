@@ -36,7 +36,7 @@ class Work:
         pool = Pool()
         Employee = pool.get('company.employee')
         res = [e.party.id for e in Employee.search([])]
-        self.party = self.on_change_with_party()
+        self.on_change_with_party()
         if not self.party:
             return res
         res.extend(r.to.id for r in self.party.relations)
