@@ -5,11 +5,10 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 
 __all__ = ['WorkParty', 'Work']
-__metaclass__ = PoolMeta
 
 
 class WorkParty(ModelSQL):
-    'Work'
+    'Work Party'
     __name__ = "project.work-party.party"
 
     work = fields.Many2One('project.work', 'Work',
@@ -18,8 +17,8 @@ class WorkParty(ModelSQL):
 
 
 class Work:
-    'Work'
     __name__ = "project.work"
+    __metaclass__ = PoolMeta
 
     allowed_contacts = fields.Function(fields.Many2Many('party.party',
             None, None, 'Allowed Contacts'),
@@ -36,7 +35,6 @@ class Work:
         pool = Pool()
         Employee = pool.get('company.employee')
         res = [e.party.id for e in Employee.search([])]
-        self.on_change_with_party()
         if not self.party:
             return res
         res.extend(r.to.id for r in self.party.relations)
