@@ -16,9 +16,8 @@ class WorkParty(ModelSQL):
     party = fields.Many2One('party.party', 'Party', required=True, select=True)
 
 
-class Work:
+class Work(metaclass=PoolMeta):
     __name__ = "project.work"
-    __metaclass__ = PoolMeta
 
     allowed_contacts = fields.Function(fields.Many2Many('party.party',
             None, None, 'Allowed Contacts'),
@@ -30,7 +29,7 @@ class Work:
             ],
         depends=['allowed_contacts'])
 
-    @fields.depends('party', methods=['party'])
+    @fields.depends('party')
     def on_change_with_allowed_contacts(self, name=None):
         pool = Pool()
         Employee = pool.get('company.employee')
