@@ -100,7 +100,7 @@ class Work(metaclass=PoolMeta):
         name = self.rec_name
 
         body = []
-        body.append('<div style="background: #EEEEEE; padding-left: 10px; '
+        body.append(u'<div style="background: #EEEEEE; padding-left: 10px; '
             'padding-bottom: 10px">'
             '<h2> %s </h2>' % name)
 
@@ -115,17 +115,17 @@ class Work(metaclass=PoolMeta):
                 new = getattr(self, field) or ''
                 new = new.splitlines(1)
                 diffs = difflib.unified_diff(old, new, n=3)
-                body.append('<br><b>{}</b>:'.format(field))
+                body.append(u'<br><b>{}</b>:'.format(field))
                 for diff in diffs:
                     if (diff.startswith('@') or diff.startswith('+++')
                             or diff.startswith('---')):
                         continue
                     if (diff.startswith('-')):
-                        body.append('<font color="red">%s</font>' %
+                        body.append(u'<font color="red">%s</font>' %
                             diff.rstrip('\n'))
                         continue
                     if (diff.startswith('+')):
-                        body.append('<font color="green">%s</font>' %
+                        body.append(u'<font color="green">%s</font>' %
                             diff.rstrip('\n'))
                         continue
                     else:
@@ -133,22 +133,22 @@ class Work(metaclass=PoolMeta):
                         continue
 
             else:
-                body.append('<br><b>{}</b>:'.format(field))
+                body.append(u'<br><b>{}</b>:'.format(field))
                 if field in old_values:
-                    body.append( '<font color="red">- {} </font>'.format(
+                    body.append( u'<font color="red">- {} </font>'.format(
                         get_value(field, old_values[field])))
-                body.append('<font color="green"> + {} </font>'.format(
+                body.append(u'<font color="green"> + {} </font>'.format(
                     get_value(field, getattr(self, field))))
 
-        body.append('<br><small>'
+        body.append(u'<br><small>'
             '<a href="%(url)s">%(id)s</a>'
             '</small>' % {
-                'url':url,
+                'url': url,
                 'id' : self.rec_name,
                 })
-        body.append('</div>')
-        body = '<br/>\n'.join(body)
-        body = ''' <html><head>
+        body.append(u'</div>')
+        body = u'<br/>\n'.join(body)
+        body = u'''<html><head>
             <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
             </head>
             <body style="font-family: courier">%s</body>
@@ -157,7 +157,7 @@ class Work(metaclass=PoolMeta):
         msg = MIMEText(body, 'html',_charset='utf-8')
         msg['From'] = FROM_ADDR
         msg['To'] = ', '.join(to_addr)
-        msg['Subject'] = Header("Changes in %s" %(self.rec_name), 'utf-8')
+        msg['Subject'] = Header(u"Changes in %s" % self.rec_name, 'utf-8')
         return msg
 
     @classmethod
@@ -226,11 +226,10 @@ class Work(metaclass=PoolMeta):
 
         url = '%s/model/project.work/%s' % (URL, getattr(self,'id'))
         name = self.rec_name
-        id = self.id
 
         body = []
 
-        body.append('<div style="background: #EEEEEE; padding-left: 10px; '
+        body.append(u'<div style="background: #EEEEEE; padding-left: 10px; '
             'padding-bottom: 10px">'
             '<h2>%s</h2>' %name)
 
@@ -238,23 +237,23 @@ class Work(metaclass=PoolMeta):
             if isinstance(getattr(self.__class__, field), fields.Text):
                 texts = getattr(self, field) or ''
                 texts = texts.splitlines(1)
-                body.append('<br><b>{}</b>:'.format(field))
+                body.append(u'<br><b>{}</b>:'.format(field))
                 for text in texts:
                     body.append(text)
             else:
-                body.append('<br><b>{}</b>:'.format(field))
-                body.append('<font> {} </font>'.format(get_value(field,
+                body.append(u'<br><b>{}</b>:'.format(field))
+                body.append(u'<font> {} </font>'.format(get_value(field,
                            getattr(self, field))))
 
-        body.append('<br><small>'
+        body.append(u'<br><small>'
             '<a href="%(url)s">%(id)s</a>'
             '</small>' % {
                 'url': url,
                 'id' : self.rec_name,
                 })
-        body.append('</div>')
-        body = '<br/>\n'.join(body)
-        body = '''<html><head>
+        body.append(u'</div>')
+        body = u'<br/>\n'.join(body)
+        body = u'''<html><head>
             <meta http-equiv="Content-Type" content="text/html;charset=utf-8">
             </head>
             <body style="font-family: courier">%s</body>
@@ -263,7 +262,7 @@ class Work(metaclass=PoolMeta):
         msg = MIMEText(body, 'html',_charset='utf-8')
         msg['From'] = FROM_ADDR
         msg['To'] = ', '.join(to_addr)
-        msg['Subject'] = Header("Summary of %s" %(self.rec_name), 'utf-8')
+        msg['Subject'] = Header(u'Summary of %s' % self.rec_name, 'utf-8')
         return msg
 
     def send_summary_mail(self,to_addr):
