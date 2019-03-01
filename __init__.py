@@ -2,10 +2,14 @@
 # copyright notices and license terms.
 from trytond.pool import Pool
 from . import work
-
+from . import default_rule
+from . import summary_contacts
 
 def register():
     Pool.register(
         work.WorkParty,
         work.Work,
+        default_rule.ContactParty,
+        default_rule.DefaultRule,
+        summary_contacts.SummaryContacts,
         module='project_contact', type_='model')
