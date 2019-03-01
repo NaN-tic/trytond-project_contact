@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+
+<form>
+  <label name="contacts"/>
+  <field name="contacts"/>
+  <label name="project"/>
+  <field name="project"/>
+</form>
