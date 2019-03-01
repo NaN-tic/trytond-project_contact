@@ -8,5 +8,10 @@
             <field name="inherit" ref="project.work_view_form"/>
             <field name="name">work_form</field>
         </record>
+        <record model="ir.model.button" id="work_summary">
+            <field name="name">send_summary</field>
+            <field name="string">Send Summary</field>
+            <field name="model" search="[('model', '=', 'project.work')]"/>
+        </record>
     </data>
 </tryton>

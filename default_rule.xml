@@ -1,0 +1,34 @@
+<?xml version="1.0"?>
+<!-- This file is part of Tryton.  The COPYRIGHT file at the top level of
+this repository contains the full copyright notices and license terms. -->
+<tryton>
+  <data>
+    <record model="ir.ui.view" id="default_rule_view_tree">
+      <field name="model">project.work.default_rule</field>
+      <field name="type">tree</field>
+      <field name="name">default_rule_tree</field>
+    </record>
+
+    <record model="ir.ui.view" id="default_rule_view_form">
+      <field name="model">project.work.default_rule</field>
+      <field name="type">form</field>
+      <field name="name">default_rule_form</field>
+    </record>
+
+    <record model="ir.action.act_window" id="act_default_rule_title">
+      <field name="name">Default Rule</field>
+      <field name="res_model">project.work.default_rule</field>
+    </record>
+    <record model="ir.action.act_window.view" id="act_default_rule_tree">
+      <field name="sequence" eval="10"/>
+      <field name="view" ref="default_rule_view_tree"/>
+      <field name="act_window" ref="act_default_rule_title"/>
+    </record>
+    <record model="ir.action.act_window.view" id="act_default_rule_form">
+      <field name="sequence" eval="20"/>
+      <field name="view" ref="default_rule_view_form"/>
+      <field name="act_window" ref="act_default_rule_title"/>
+    </record>
+    <menuitem id="menu_default_rule" parent="project.menu_configuration" sequence="1" icon="tryton-list" action="act_default_rule_title"/>
+  </data>
+</tryton>
