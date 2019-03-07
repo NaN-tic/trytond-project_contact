@@ -55,12 +55,15 @@ class Work(metaclass=PoolMeta):
     @fields.depends('parent')
     def on_change_with_contacts(self, name=None):
         DefaultRule = Pool().get('project.work.default_rule')
-        pattern = {
-            'project': self.parent.id if self.parent else None,
-            }
+        pattern = self.get_default_rule_pattern()
         contacts = DefaultRule.compute(pattern)
         # Removes the list of existing contacts
         return [x.id for x in contacts]
+
+    def get_default_rule_pattern(self):
+        return {
+            'project': self.parent.id if self.parent else None,
+            }
 
     @fields.depends('party', 'company')
     def on_change_with_allowed_contacts(self, name=None):
@@ -204,11 +207,14 @@ class Work(metaclass=PoolMeta):
 
         for work in ready_to_send_summary:
             to_addr.extend(SummaryContacts.get_mail())
-            pattern = {
-                'project': work.parent.id if work.parent else None,
-                }
+            pattern = work.get_summary_contacts_pattern()
             to_addr = SummaryContacts.compute(pattern)
             work.send_summary_mail(to_addr)
+
+    def get_summary_contacts_pattern(self):
+        return {
+            'project': self.parent.id if self.parent else None,
+            }
 
     def get_summary_mail(self, to_addr):
         for party in self.contacts:
