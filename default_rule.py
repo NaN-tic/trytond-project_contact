@@ -25,6 +25,7 @@ class DefaultRule(sequence_ordered(), MatchMixin, ModelSQL, ModelView):
     contacts = fields.Many2Many('project.work.default_rule-party.party', 'rule',
              'party','Contacts')
 
+
     @classmethod
     def compute(cls, pattern):
         contacts = []
