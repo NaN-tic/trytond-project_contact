@@ -266,11 +266,11 @@ class Work:
         msg['Subject'] = Header(u'Summary of %s' % self.rec_name, 'utf-8')
         return msg
 
-    def send_summary_mail(self,to_addr):
+    def send_summary_mail(self, to_addr):
         msg = self.get_summary_mail(to_addr)
         sendmail(msg['From'],msg['To'],msg)
 
-    def send_mail(self,msg):
+    def send_mail(self, msg):
         sendmail(msg['From'],msg['To'],msg)
 
     @classmethod
