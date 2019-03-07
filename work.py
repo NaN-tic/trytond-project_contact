@@ -110,8 +110,14 @@ class Work(metaclass=PoolMeta):
 
         body = []
         body.append(u'<div style="background: #EEEEEE; padding-left: 10px; '
-            'padding-bottom: 10px">'
-            '<h2> %s </h2>' % name)
+                'padding-bottom: 10px">'
+                '<a href="%(url)s">'
+                '<h2 style="margin: 0px 0px 0px 0px; '
+                'padding: 0px 0px 0px 0px;">%(name)s</h2>'
+                '</a>' % {
+                'url':url,
+                'name' : name,
+                })
 
         for field in self.get_mail_fields():
             if old_values.get(field) == getattr(self, field):
@@ -142,19 +148,13 @@ class Work(metaclass=PoolMeta):
                         continue
 
             else:
-                body.append(u'<br><b>{}</b>:'.format(field))
+                body.append(u'<b>{}</b>:'.format(field))
                 if field in old_values:
-                    body.append( u'<font color="red">- {} </font>'.format(
+                    body.append(u'<font color="red">- {} </font>'.format(
                         get_value(field, old_values[field])))
                 body.append(u'<font color="green"> + {} </font>'.format(
                     get_value(field, getattr(self, field))))
 
-        body.append(u'<br><small>'
-            '<a href="%(url)s">%(id)s</a>'
-            '</small>' % {
-                'url': url,
-                'id' : self.rec_name,
-                })
         body.append(u'</div>')
         body = u'<br/>\n'.join(body)
         body = u'''<html><head>
@@ -246,27 +246,27 @@ class Work(metaclass=PoolMeta):
         body = []
 
         body.append(u'<div style="background: #EEEEEE; padding-left: 10px; '
-            'padding-bottom: 10px">'
-            '<h2>%s</h2>' %name)
+                'padding-bottom: 10px">'
+                '<a href="%(url)s">'
+                '<h2 style="margin: 0px 0px 0px 0px; '
+                'padding: 0px 0px 0px 0px;"> %(name)s </h2>'
+                '</a>'
+                % {
+                'url':url,
+                'name' : name,
+                })
 
         for field in self.get_mail_fields():
             if isinstance(getattr(self.__class__, field), fields.Text):
                 texts = getattr(self, field) or ''
                 texts = texts.splitlines(1)
-                body.append(u'<br><b>{}</b>:'.format(field))
+                body.append(u'<b>{}</b>:'.format(field))
                 for text in texts:
                     body.append(text)
             else:
-                body.append(u'<br><b>{}</b>:'.format(field))
-                body.append(u'<font> {} </font>'.format(get_value(field,
-                           getattr(self, field))))
+                body.append(u'<b>{}</b>: {}'.format(field,get_value(field,
+                            getattr(self, field))))
 
-        body.append(u'<br><small>'
-            '<a href="%(url)s">%(id)s</a>'
-            '</small>' % {
-                'url': url,
-                'id' : self.rec_name,
-                })
         body.append(u'</div>')
         body = u'<br/>\n'.join(body)
         body = u'''<html><head>
