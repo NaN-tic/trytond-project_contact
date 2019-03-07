@@ -80,6 +80,9 @@ class Work(metaclass=PoolMeta):
         return ['name', 'effort_duration', 'comment', 'state']
 
     def get_mail(self, old_values=None):
+        pool = Pool()
+        Employee = pool.get('company.employee')
+
         if old_values is None:
             old_values = {}
             for field in self.get_mail_fields():
@@ -96,8 +99,11 @@ class Work(metaclass=PoolMeta):
             return value
 
         to_addr = []
+        res = [e.party.id for e in Employee.search([])]
+
         for party in self.contacts:
-            to_addr.append(party.email)
+            if party.id in res:
+                to_addr.append(party.email)
 
         url = '%s/model/project.work/%s' % (URL, getattr(self,'id'))
         name = self.rec_name
@@ -217,8 +223,12 @@ class Work(metaclass=PoolMeta):
             }
 
     def get_summary_mail(self, to_addr):
+        Employee = Pool().get('company.employee')
+        res = [e.party.id for e in Employee.search([])]
+
         for party in self.contacts:
-            to_addr.append(party.email)
+            if party.id in res:
+                to_addr.append(party.email)
 
         def get_value(field, value):
             if isinstance(getattr(self.__class__, field), fields.Many2One):
