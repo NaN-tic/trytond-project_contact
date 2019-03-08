@@ -131,7 +131,8 @@ class Work:
                 new = getattr(self, field) or ''
                 new = new.splitlines(1)
                 diffs = difflib.unified_diff(old, new, n=3)
-                body.append(u'<br><b>{}</b>:'.format(field))
+                title = ' '.join([x.capitalize() for x in field.split('_')])
+                body.append(u'<br><b>{}</b>:'.format(title))
                 for diff in diffs:
                     if (diff.startswith('@') or diff.startswith('+++')
                             or diff.startswith('---')):
@@ -149,7 +150,8 @@ class Work:
                         continue
 
             else:
-                body.append(u'<b>{}</b>:'.format(field))
+                title = ' '.join([x.capitalize() for x in field.split('_')])
+                body.append(u'<b>{}</b>:'.format(title))
                 if field in old_values:
                     body.append(u'<font color="red">- {} </font>'.format(
                         get_value(field, old_values[field])))
@@ -261,11 +263,13 @@ class Work:
             if isinstance(getattr(self.__class__, field), fields.Text):
                 texts = getattr(self, field) or ''
                 texts = texts.splitlines(1)
-                body.append(u'<b>{}</b>:'.format(field))
+                title = ' '.join([x.capitalize() for x in field.split('_')])
+                body.append(u'<b>{}</b>:'.format(title))
                 for text in texts:
                     body.append(text)
             else:
-                body.append(u'<b>{}</b>: {}'.format(field,get_value(field,
+                title = ' '.join([x.capitalize() for x in field.split('_')])
+                body.append(u'<b>{}</b>: {}'.format(title,get_value(field,
                             getattr(self, field))))
 
         body.append(u'</div>')
