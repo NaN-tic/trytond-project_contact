@@ -1,6 +1,8 @@
 # The COPYRIGHT file at the top level of this repository contains the full
 # copyright notices and license terms.
 import difflib
+import cgi
+from urlparse import urlparse
 from email.mime.text import MIMEText
 from email.header import Header
 from trytond.model import ModelSQL, ModelView, fields
@@ -170,6 +172,10 @@ class Work(metaclass=PoolMeta):
         msg['From'] = FROM_ADDR
         msg['To'] = ', '.join(to_addr)
         msg['Subject'] = Header(u"Changes in %s" % self.rec_name, 'utf-8')
+
+        url = urlparse(url)
+        if old_values:
+            msg['In-Reply-To'] = "<{}@{}>".format(self.id, url.netloc)
         return msg
 
     @classmethod
@@ -285,6 +291,9 @@ class Work(metaclass=PoolMeta):
         msg['From'] = FROM_ADDR
         msg['To'] = ', '.join(to_addr)
         msg['Subject'] = Header(u'Summary of %s' % self.rec_name, 'utf-8')
+
+        url = urlparse(url)
+        msg['In-Reply-To'] = "<{}@{}>".format(self.id, url.netloc)
         return msg
 
     def send_summary_mail(self, to_addr):
