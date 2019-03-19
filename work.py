@@ -5,6 +5,7 @@ import cgi
 from urlparse import urlparse
 from email.mime.text import MIMEText
 from email.header import Header
+
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
@@ -102,10 +103,16 @@ class Work:
             return value
 
         to_addr = []
-        res = [e.party.id for e in Employee.search([])]
+        employees = [e.party.id for e in Employee.search([])]
+
+        uid = self.write_uid or self.create_uid
+        if uid:
+            discard_employees = [ce.party.id for ce in uid.employees
+                if not uid.send_own_changes]
+            employees = set(employees) - set(discard_employees)
 
         for party in self.contacts:
-            if party.id in res:
+            if party.id in employees:
                 to_addr.append(party.email)
 
         url = '%s/model/project.work/%s' % (URL, getattr(self,'id'))
@@ -160,6 +167,17 @@ class Work:
                         get_value(field, old_values[field])))
                 body.append(u'<font color="green"> + {} </font>'.format(
                     get_value(field, getattr(self, field))))
+
+        date = self.write_date or self.create_date
+        date = date.strftime('%Y-%m-%d %H:%M') if date else '/'
+        body.append('<br>'
+                    '<small>'
+                    '%(operation)s by %(write_user)s on %(write_date)s'
+                    '</small>' % {
+                    'operation': 'Updated' if old_values else 'Created',
+                    'write_user': uid.name,
+                    'write_date' : date,
+                    })
 
         body.append(u'</div>')
         body = u'<br/>\n'.join(body)
@@ -234,10 +252,18 @@ class Work:
 
     def get_summary_mail(self, to_addr):
         Employee = Pool().get('company.employee')
-        res = [e.party.id for e in Employee.search([])]
+
+        to_addr = []
+        employees = [e.party.id for e in Employee.search([])]
+
+        uid = self.write_uid or self.create_uid
+        if uid:
+            discard_employees = [ce.party.id for ce in uid.employees
+                if not uid.send_own_changes]
+            employees = set(employees) - set(discard_employees)
 
         for party in self.contacts:
-            if party.id in res:
+            if party.id in employees:
                 to_addr.append(party.email)
 
         def get_value(field, value):
@@ -279,6 +305,16 @@ class Work:
                 title = ' '.join([x.capitalize() for x in field.split('_')])
                 body.append(u'<b>{}</b>: {}'.format(title,get_value(field,
                             getattr(self, field))))
+
+        date = self.write_date or self.create_date
+        date = date.strftime('%Y-%m-%d %H:%M') if date else '/'
+        body.append('<br>'
+                    '<small>'
+                    'Closed by %(write_user)s on %(write_date)s'
+                    '</small>' % {
+                    'write_user': uid.name,
+                    'write_date' : date,
+                    })
 
         body.append(u'</div>')
         body = u'<br/>\n'.join(body)
