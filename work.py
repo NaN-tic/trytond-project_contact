@@ -133,6 +133,7 @@ class Work(metaclass=PoolMeta):
                 title = ' '.join([x.capitalize() for x in field.split('_')])
                 body.append(u'<br><b>{}</b>:'.format(title))
                 for diff in diffs:
+                    diff = cgi.escape(diff)
                     if (diff.startswith('@') or diff.startswith('+++')
                             or diff.startswith('---')):
                         continue
@@ -265,6 +266,7 @@ class Work(metaclass=PoolMeta):
                 title = ' '.join([x.capitalize() for x in field.split('_')])
                 body.append(u'<b>{}</b>:'.format(title))
                 for text in texts:
+                    text = cgi.escape(text)
                     body.append(text)
             else:
                 title = ' '.join([x.capitalize() for x in field.split('_')])
