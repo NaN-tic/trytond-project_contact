@@ -7,9 +7,8 @@ from trytond.pyson import Eval
 __all__ = ['User']
 
 
-class User:
+class User(metaclass=PoolMeta):
     __name__ = 'res.user'
-    __metaclass__ = PoolMeta
 
     send_own_changes = fields.Boolean('Send Own Changes')
 
