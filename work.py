@@ -80,9 +80,12 @@ class Work(metaclass=PoolMeta):
 
     @staticmethod
     def get_mail_fields():
-        return ['name', 'effort_duration', 'comment', 'state']
+        # Dictionary for One2Many values
+        fields = ['name', 'effort_duration', 'comment', 'state']
+        res = {}.fromkeys(fields)
+        return res
 
-    def get_mail(self, old_values=None):
+    def get_mail(self, one2many_values=None, old_values=None):
         pool = Pool()
         Employee = pool.get('company.employee')
 
@@ -90,6 +93,8 @@ class Work(metaclass=PoolMeta):
             old_values = {}
             for field in self.get_mail_fields():
                 old_values.fromkeys(field, None)
+        if one2many_values is None:
+            one2many_values = {}
 
         def get_value(field, value):
             if isinstance(getattr(self.__class__, field), fields.Many2One):
@@ -128,10 +133,9 @@ class Work(metaclass=PoolMeta):
                 'name' : name,
                 })
 
-        for field in self.get_mail_fields():
+        for field, subfields in self.get_mail_fields().items():
             if old_values.get(field) == getattr(self, field):
                 continue
-
             diff=[]
             if isinstance(getattr(self.__class__, field), fields.Text):
                 old = old_values.get(field) or ''
@@ -157,7 +161,37 @@ class Work(metaclass=PoolMeta):
                     else:
                         body.append(diff.rstrip('\n'))
                         continue
-
+            elif isinstance(getattr(self.__class__, field), fields.One2Many):
+                related_model = Pool().get(getattr(self.__class__,
+                            field).model_name)
+                for one2many in one2many_values.get(field, []):
+                    for subfield in subfields:
+                        if isinstance(getattr(related_model, subfield),
+                                fields.Text):
+                            texts = one2many.get(subfield) or ''
+                            texts = texts.splitlines(1)
+                            title = ' '.join([x.capitalize() for x in subfield.split('_')])
+                            body.append(u'<b>{}</b>:'.format(title))
+                            for text in texts:
+                                text = cgi.escape(text)
+                                body.append(text)
+                        elif isinstance(getattr(related_model, subfield),
+                                fields.DateTime):
+                            date = one2many.get(subfield)
+                            date = date.strftime('%Y-%m-%d %H:%M') if date else '/'
+                            title = ' '.join([x.capitalize() for x in subfield.split('_')])
+                            body.append(u'<b>{}</b>: {}'.format(title,date))
+                        elif isinstance(getattr(related_model, subfield),
+                                fields.Many2One):
+                            Model = Pool().get(getattr(related_model,
+                                    subfield).model_name)
+                            value = Model(one2many.get(subfield))
+                            title = ' '.join([x.capitalize() for x in subfield.split('_')])
+                            body.append(u'<b>{}</b>: {}'.format(title,value.rec_name))
+                        else:
+                            title = ' '.join([x.capitalize() for x in subfield.split('_')])
+                            body.append(u'<b>{}</b>: {}'.format(title,one2many.get(subfield)))
+                    body.append(u'<br><hr style="border-top: 1px dashed;">')
             else:
                 title = ' '.join([x.capitalize() for x in field.split('_')])
                 body.append(u'<b>{}</b>:'.format(title))
@@ -209,12 +243,13 @@ class Work(metaclass=PoolMeta):
         SummaryContacts = Pool().get('project.work.summary_contacts')
 
         actions = iter(args)
-        args  = []
+        args = []
 
         old_values = {}
         to_addr = []
         ready_to_send_summary = []
         check_in_email_fields = []
+        one2many_values = {}
         for records, values in zip(actions, actions):
             if values.get('state') == 'done':
                 ready_to_send_summary += records
@@ -227,6 +262,16 @@ class Work(metaclass=PoolMeta):
                 for field in cls.get_mail_fields():
                     old_values[record.id][field] = getattr(record, field)
 
+                    if isinstance(getattr(record.__class__, field),
+                        fields.One2Many):
+
+                        if values[field][0][0] != 'create':
+                            continue
+
+                        for one2many_list in values[field][0][1]:
+                            one2many_values.setdefault(field, []).append(
+                                one2many_list)
+
             for work in records:
                 for party in work.contacts:
                     to_addr.append(party.email)
@@ -236,7 +281,8 @@ class Work(metaclass=PoolMeta):
 
         actions = iter(args)
         for record in check_in_email_fields:
-            record.send_mail(record.get_mail(old_values[record.id]))
+            record.send_mail(record.get_mail(one2many_values,
+                    old_values[record.id]))
 
         for work in ready_to_send_summary:
             to_addr.extend(SummaryContacts.get_mail())
@@ -292,7 +338,9 @@ class Work(metaclass=PoolMeta):
                 })
 
         for field in self.get_mail_fields():
-            if isinstance(getattr(self.__class__, field), fields.Text):
+            if isinstance(getattr(self.__class__, field), fields.One2Many):
+                continue
+            elif isinstance(getattr(self.__class__, field), fields.Text):
                 texts = getattr(self, field) or ''
                 texts = texts.splitlines(1)
                 title = ' '.join([x.capitalize() for x in field.split('_')])
