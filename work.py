@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 import difflib
 import cgi
-from urlparse import urlparse
+from urllib import parse as urlparse
 from email.mime.text import MIMEText
 from email.header import Header
 
