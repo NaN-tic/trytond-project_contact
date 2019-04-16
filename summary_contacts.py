@@ -1,8 +1,4 @@
-from trytond.model import (ModelSQL, ModelView, MatchMixin, fields,
-    sequence_ordered)
-from trytond import backend
-from trytond.pyson import Eval
-from trytond.pool import Pool
+from trytond.model import (ModelSQL, ModelView, MatchMixin, fields)
 
 __all__ = ['SummaryContacts']
 
