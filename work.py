@@ -9,7 +9,7 @@ from email.header import Header
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
-from trytond.sendmail import sendmail
+from trytond.sendmail import sendmail_transactional
 from trytond.config import config
 
 __all__ = ['WorkParty', 'Work']
@@ -383,10 +383,10 @@ class Work:
 
     def send_summary_mail(self, to_addr):
         msg = self.get_summary_mail(to_addr)
-        sendmail(msg['From'],msg['To'],msg)
+        sendmail_transactional(msg['From'],msg['To'],msg)
 
     def send_mail(self, msg):
-        sendmail(msg['From'],msg['To'],msg)
+        sendmail_transactional(msg['From'],msg['To'],msg)
 
     @classmethod
     @ModelView.button
