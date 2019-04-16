@@ -5,6 +5,7 @@ import cgi
 from urlparse import urlparse
 from email.mime.text import MIMEText
 from email.header import Header
+from collections import OrderedDict
 
 from trytond.model import ModelSQL, ModelView, fields
 from trytond.pool import Pool, PoolMeta
@@ -83,7 +84,7 @@ class Work:
     def get_mail_fields():
         # Dictionary for One2Many values
         fields = ['name', 'effort_duration', 'comment', 'state']
-        res = {}.fromkeys(fields)
+        res = OrderedDict.fromkeys(fields)
         return res
 
     def get_mail(self, one2many_values=None, old_values=None):
@@ -266,6 +267,8 @@ class Work:
                     if isinstance(getattr(record.__class__, field),
                         fields.One2Many):
 
+                        if not field in values:
+                            continue
                         if values[field][0][0] != 'create':
                             continue
 
