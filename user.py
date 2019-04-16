@@ -1,8 +1,5 @@
 from trytond.pool import PoolMeta
-from trytond.model import (ModelSQL, ModelView, MatchMixin, fields,
-    sequence_ordered)
-from trytond import backend
-from trytond.pyson import Eval
+from trytond.model import fields
 
 __all__ = ['User']
 
