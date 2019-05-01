@@ -2,7 +2,7 @@
 # copyright notices and license terms.
 import difflib
 import cgi
-from urllib import parse as urlparse
+from urllib.parse import urlparse
 from email.mime.text import MIMEText
 from email.header import Header
 from collections import OrderedDict
@@ -56,7 +56,7 @@ class Work(metaclass=PoolMeta):
         contacts = DefaultRule.compute(pattern)
         return [x.id for x in contacts]
 
-    @fields.depends('parent')
+    @fields.depends('parent',  methods=['get_default_rule_pattern'])
     def on_change_with_contacts(self, name=None):
         DefaultRule = Pool().get('project.work.default_rule')
         pattern = self.get_default_rule_pattern()
