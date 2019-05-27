@@ -243,25 +243,23 @@ class Work(metaclass=PoolMeta):
     def write(cls, *args):
         SummaryContacts = Pool().get('project.work.summary_contacts')
 
-        actions = iter(args)
-        args = []
-
-        old_values = {}
         to_addr = []
         ready_to_send_summary = []
-        check_in_email_fields = []
-        one2many_values = {}
+        to_send = []
+        actions = iter(args)
+
         for records, values in zip(actions, actions):
             if values.get('state') == 'done':
                 ready_to_send_summary += records
 
-            if set(values.keys()) & set(cls.get_mail_fields()):
-                check_in_email_fields += records
+            if not (set(values.keys()) & set(cls.get_mail_fields())):
+                continue
 
             for record in records:
-                old_values[record.id] = {}
+                old_values = {}
+                o2mv = {}
                 for field in cls.get_mail_fields():
-                    old_values[record.id][field] = getattr(record, field)
+                    old_values[field] = getattr(record, field)
 
                     if isinstance(getattr(record.__class__, field),
                         fields.One2Many):
@@ -272,20 +270,18 @@ class Work(metaclass=PoolMeta):
                             continue
 
                         for one2many_list in values[field][0][1]:
-                            one2many_values.setdefault(field, []).append(
-                                one2many_list)
+                            o2mv.setdefault(field, []).append(one2many_list)
+                to_send.append((record, old_values, o2mv))
 
             for work in records:
                 for party in work.contacts:
                     to_addr.append(party.email)
-            args.extend((records, values))
 
         super(Work, cls).write(*args)
 
-        actions = iter(args)
-        for record in check_in_email_fields:
+        for record, old_values, one2many_values in to_send:
             record.send_mail(record.get_mail(one2many_values,
-                    old_values[record.id]))
+                    old_values))
 
         for work in ready_to_send_summary:
             to_addr.extend(SummaryContacts.get_mail())
