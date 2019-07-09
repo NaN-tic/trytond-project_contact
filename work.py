@@ -2,6 +2,9 @@
 # copyright notices and license terms.
 import difflib
 import cgi
+import pytz
+import time
+
 from urllib.parse import urlparse
 from email.mime.text import MIMEText
 from email.header import Header
@@ -12,6 +15,7 @@ from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.sendmail import sendmail_transactional
 from trytond.config import config
+from trytond.transaction import Transaction
 
 __all__ = ['WorkParty', 'Work']
 
@@ -202,7 +206,16 @@ class Work(metaclass=PoolMeta):
                 body.append(u'<font color="green"> + {} </font>'.format(
                     get_value(field, getattr(self, field))))
 
+        Company = pool.get('company.company')
+        company_id = Transaction().context.get('company')
         date = self.write_date or self.create_date
+        if company_id:
+            company = Company(company_id)
+            if company.timezone:
+                timezone = pytz.timezone(company.timezone)
+                date = timezone.localize(date)
+                date = date + date.utcoffset()
+
         date = date.strftime('%Y-%m-%d %H:%M') if date else '/'
         body.append('<br>'
                     '<small>'
@@ -356,7 +369,16 @@ class Work(metaclass=PoolMeta):
                 body.append(u'<b>{}</b>: {}'.format(title,get_value(field,
                             getattr(self, field))))
 
+        Company = pool.get('company.company')
+        company_id = Transaction().context.get('company')
         date = self.write_date or self.create_date
+        if company_id:
+            company = Company(company_id)
+            if company.timezone:
+                timezone = pytz.timezone(company.timezone)
+                date = timezone.localize(date)
+                date = date + date.utcoffset()
+
         date = date.strftime('%Y-%m-%d %H:%M') if date else '/'
         body.append('<br>'
                     '<small>'
