@@ -309,6 +309,7 @@ class Work(metaclass=PoolMeta):
 
     def get_summary_mail(self, to_addr):
         Employee = Pool().get('company.employee')
+        Company = Pool().get('company.company')
 
         to_addr = []
         employees = [e.party.id for e in Employee.search([])]
@@ -365,7 +366,7 @@ class Work(metaclass=PoolMeta):
                 body.append(u'<b>{}</b>: {}'.format(title,get_value(field,
                             getattr(self, field))))
 
-        Company = pool.get('company.company')
+
         company_id = Transaction().context.get('company')
         date = self.write_date or self.create_date
         if company_id:
