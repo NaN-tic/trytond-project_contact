@@ -60,7 +60,7 @@ class Work(metaclass=PoolMeta):
         contacts = DefaultRule.compute(pattern)
         return [x.id for x in contacts]
 
-    @fields.depends('parent',  methods=['get_default_rule_pattern'])
+    @fields.depends('_parent_parent.id','parent',  methods=['get_default_rule_pattern'])
     def on_change_with_contacts(self, name=None):
         DefaultRule = Pool().get('project.work.default_rule')
         pattern = self.get_default_rule_pattern()
