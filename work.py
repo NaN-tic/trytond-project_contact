@@ -3,7 +3,6 @@
 import difflib
 import cgi
 import pytz
-import time
 
 from urllib.parse import urlparse
 from email.mime.text import MIMEText
@@ -73,7 +72,7 @@ class Work(metaclass=PoolMeta):
             'project': self.parent.id if self.parent else None,
             }
 
-    @fields.depends('party', 'company')
+    @fields.depends('party', 'company', '_parent_party.id')
     def on_change_with_allowed_contacts(self, name=None):
         pool = Pool()
         Employee = pool.get('company.employee')
