@@ -90,6 +90,9 @@ class Work(metaclass=PoolMeta):
         return res
 
     def get_mail(self, one2many_values=None, old_values=None):
+        '''
+        Return Mail object or None if there are no recipients
+        '''
         pool = Pool()
         Employee = pool.get('company.employee')
 
@@ -122,6 +125,9 @@ class Work(metaclass=PoolMeta):
         for party in self.contacts:
             if party.id in employees:
                 to_addr.append(party.email)
+
+        if not to_addr:
+            return
 
         url = '%s/model/project.work/%s' % (URL, getattr(self,'id'))
         name = self.rec_name
@@ -311,6 +317,10 @@ class Work(metaclass=PoolMeta):
             }
 
     def get_summary_mail(self, to_addr):
+        '''
+        Return Mail object or None if there are no recipients
+        '''
+
         Employee = Pool().get('company.employee')
         Company = Pool().get('company.company')
 
@@ -326,6 +336,9 @@ class Work(metaclass=PoolMeta):
         for party in self.contacts:
             if party.id in employees:
                 to_addr.append(party.email)
+
+        if not to_addr:
+            return
 
         def get_value(field, value):
             if isinstance(getattr(self.__class__, field), fields.Many2One):
@@ -407,10 +420,12 @@ class Work(metaclass=PoolMeta):
 
     def send_summary_mail(self, to_addr):
         msg = self.get_summary_mail(to_addr)
-        sendmail_transactional(msg['From'],msg['To'],msg)
+        if msg:
+            sendmail_transactional(msg['From'], msg['To'], msg)
 
     def send_mail(self, msg):
-        sendmail_transactional(msg['From'],msg['To'],msg)
+        if msg:
+            sendmail_transactional(msg['From'], msg['To'], msg)
 
     @classmethod
     @ModelView.button
