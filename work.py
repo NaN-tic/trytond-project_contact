@@ -85,7 +85,7 @@ class Work(metaclass=PoolMeta):
     @staticmethod
     def get_mail_fields():
         # Dictionary for One2Many values
-        fields = ['name', 'effort_duration', 'comment', 'state']
+        fields = ['name', 'effort_duration', 'comment', 'status']
         res = OrderedDict.fromkeys(fields)
         return res
 
