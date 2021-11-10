@@ -259,10 +259,13 @@ class Work(metaclass=PoolMeta):
 
     @classmethod
     def write(cls, *args):
-        SummaryContacts = Pool().get('project.work.summary_contacts')
+        pool = Pool()
+        ModelData = pool.get('ir.model.data')
+        SummaryContacts = pool.get('project.work.summary_contacts')
 
         actions = iter(args)
         args = []
+        status_done_id = ModelData.get_id('project', 'work_done_status')
 
         old_values = {}
         to_addr = []
@@ -270,7 +273,7 @@ class Work(metaclass=PoolMeta):
         check_in_email_fields = []
         one2many_values = {}
         for records, values in zip(actions, actions):
-            if values.get('state') == 'done':
+            if values.get('status') == status_done_id:
                 ready_to_send_summary += records
 
             if set(values.keys()) & set(cls.get_mail_fields()):
