@@ -420,11 +420,11 @@ class Work(metaclass=PoolMeta):
 
     def send_summary_mail(self, to_addr):
         msg = self.get_summary_mail(to_addr)
-        if msg:
+        if msg and msg['To']:
             sendmail_transactional(msg['From'], msg['To'], msg)
 
     def send_mail(self, msg):
-        if msg:
+        if msg and msg['To']:
             sendmail_transactional(msg['From'], msg['To'], msg)
 
     @classmethod
