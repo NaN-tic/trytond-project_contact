@@ -34,14 +34,21 @@ class Work(metaclass=PoolMeta):
     __name__ = "project.work"
 
     allowed_contacts = fields.Function(fields.Many2Many('party.party',
-            None, None, 'Allowed Contacts'),
+            None, None, 'Allowed Contacts',
+            context={
+                'company': Eval('company'),
+            },
+            depends=['company']),
         'on_change_with_allowed_contacts')
     contacts = fields.Many2Many('project.work-party.party', 'work',
         'party', 'Contacts',
         domain=[
             ('id', 'in', Eval('allowed_contacts', [])),
             ],
-        depends=['allowed_contacts'])
+        context={
+                'company': Eval('company'),
+            },
+        depends=['allowed_contacts', 'company'])
 
     @classmethod
     def __setup__(cls):
