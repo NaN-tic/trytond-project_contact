@@ -1,4 +1,4 @@
-# 
+#
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
@@ -10,38 +10,74 @@ msgctxt "field:project.work,contacts:"
 msgid "Contacts"
 msgstr "Contactes"
 
-msgctxt "field:project.work-party.party,create_date:"
-msgid "Create Date"
-msgstr "Data de creació"
-
-msgctxt "field:project.work-party.party,create_uid:"
-msgid "Create User"
-msgstr "Usuari de creació"
-
-msgctxt "field:project.work-party.party,id:"
-msgid "ID"
-msgstr "Identificador"
-
 msgctxt "field:project.work-party.party,party:"
 msgid "Party"
 msgstr "Tercer"
-
-msgctxt "field:project.work-party.party,rec_name:"
-msgid "Name"
-msgstr "Nom"
 
 msgctxt "field:project.work-party.party,work:"
 msgid "Work"
 msgstr "Treball"
 
-msgctxt "field:project.work-party.party,write_date:"
-msgid "Write Date"
-msgstr "Data modificació"
+msgctxt "field:project.work.default_rule,contacts:"
+msgid "Contacts"
+msgstr "Contactes"
 
-msgctxt "field:project.work-party.party,write_uid:"
-msgid "Write User"
-msgstr "Usuari modificació"
+msgctxt "field:project.work.default_rule,project:"
+msgid "Project"
+msgstr "Projecte"
+
+msgctxt "field:project.work.default_rule-party.party,party:"
+msgid "Party"
+msgstr "Tercer"
+
+msgctxt "field:project.work.default_rule-party.party,rule:"
+msgid "Rule"
+msgstr "Regla"
+
+msgctxt "field:project.work.summary_contacts,contacts:"
+msgid "Contacts"
+msgstr "Contactes"
+
+msgctxt "field:project.work.summary_contacts,project:"
+msgid "Project"
+msgstr "Projecte"
+
+msgctxt "field:res.user,send_own_changes:"
+msgid "Send Own Changes"
+msgstr "Enviar canvis de si mateix"
+
+msgctxt "model:ir.action,name:act_default_rule_title"
+msgid "Default Rule"
+msgstr "Regla per defecte"
+
+msgctxt "model:ir.action,name:act_summary_contacts_title"
+msgid "Summary Contacts"
+msgstr "Resum contactes"
+
+msgctxt "model:ir.model.button,string:work_summary"
+msgid "Send Summary"
+msgstr "Envia resum"
+
+msgctxt "model:ir.ui.menu,name:menu_default_rule"
+msgid "Default Rule"
+msgstr "Regla per defecte"
+
+msgctxt "model:ir.ui.menu,name:menu_summary_contacts"
+msgid "Summary Contacts"
+msgstr "Resum contactes"
 
 msgctxt "model:project.work-party.party,name:"
-msgid "Work"
+msgid "Work Party"
 msgstr "Treball"
+
+msgctxt "model:project.work.default_rule,name:"
+msgid "Default Rule"
+msgstr "Regla per defecte"
+
+msgctxt "model:project.work.default_rule-party.party,name:"
+msgid "Contact Party"
+msgstr "Tercer contacte"
+
+msgctxt "model:project.work.summary_contacts,name:"
+msgid "Summary Contacts"
+msgstr "Resum contactes"
