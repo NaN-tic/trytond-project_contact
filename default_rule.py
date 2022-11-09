@@ -9,8 +9,8 @@ class ContactParty(ModelSQL):
     __name__ = 'project.work.default_rule-party.party'
 
     rule = fields.Many2One('project.work.default_rule', 'Rule',
-        required=True, select=True, ondelete='CASCADE')
-    party = fields.Many2One('party.party', 'Party', required=True, select=True,
+        required=True, ondelete='CASCADE')
+    party = fields.Many2One('party.party', 'Party', required=True,
         ondelete='CASCADE')
 
 
