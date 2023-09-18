@@ -102,6 +102,7 @@ class Work(metaclass=PoolMeta):
         '''
         pool = Pool()
         Employee = pool.get('company.employee')
+        User = pool.get('res.user')
 
         if old_values is None:
             old_values = {}
@@ -123,11 +124,11 @@ class Work(metaclass=PoolMeta):
         to_addr = []
         employees = [e.party.id for e in Employee.search([])]
 
-        uid = self.write_uid or self.create_uid
-        if uid:
-            discard_employees = [ce.party.id for ce in uid.employees
-                if not uid.send_own_changes]
-            employees = set(employees) - set(discard_employees)
+        work_uid = self.write_uid or self.create_uid
+        user_id = Transaction().user
+        user = User(user_id)
+        if work_uid == user and not user.send_own_changes and user.employee:
+            employees = set(employees) - set([user.employee.party.id])
 
         for party in self.contacts:
             if party.id in employees:
@@ -234,7 +235,7 @@ class Work(metaclass=PoolMeta):
                     '%(operation)s by %(write_user)s on %(write_date)s'
                     '</small>' % {
                     'operation': 'Updated' if old_values else 'Created',
-                    'write_user': uid.name,
+                    'write_user': work_uid.name,
                     'write_date' : date,
                     })
 
