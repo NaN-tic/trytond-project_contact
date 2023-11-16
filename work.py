@@ -36,7 +36,7 @@ class Work(metaclass=PoolMeta):
     allowed_contacts = fields.Function(fields.Many2Many('party.party',
             None, None, 'Allowed Contacts',
             context={
-                'company': Eval('company'),
+                'company': Eval('company', -1),
             },
             depends=['company']),
         'on_change_with_allowed_contacts')
@@ -46,7 +46,7 @@ class Work(metaclass=PoolMeta):
             ('id', 'in', Eval('allowed_contacts', [])),
             ],
         context={
-                'company': Eval('company'),
+                'company': Eval('company', -1),
             },
         depends=['allowed_contacts', 'company'])
 
