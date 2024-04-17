@@ -11,7 +11,7 @@
         <record model="ir.model.button" id="work_summary">
             <field name="name">send_summary</field>
             <field name="string">Send Summary</field>
-            <field name="model" search="[('model', '=', 'project.work')]"/>
+            <field name="model">project.work</field>
         </record>
     </data>
 </tryton>
