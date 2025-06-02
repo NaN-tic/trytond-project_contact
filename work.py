@@ -9,7 +9,7 @@ from email.mime.text import MIMEText
 from email.header import Header
 from collections import OrderedDict
 
-from trytond.model import ModelSQL, ModelView, fields
+from trytond.model import ModelSQL, ModelView, fields, sequence_ordered
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.sendmail import sendmail_transactional
@@ -21,18 +21,19 @@ __all__ = ['WorkParty', 'Work']
 FROM_ADDR = config.get('email', 'from')
 URL = config.get('project_contact', 'url')
 
-class WorkParty(ModelSQL):
+class WorkParty(sequence_ordered(), ModelView, ModelSQL):
     'Work Party'
     __name__ = "project.work-party.party"
 
     work = fields.Many2One('project.work', 'Work',
         required=True, ondelete='CASCADE')
-    party = fields.Many2One('party.party', 'Party', required=True)
-
-
-class Work(metaclass=PoolMeta):
-    __name__ = "project.work"
-
+    party = fields.Many2One('party.party', 'Party',
+            domain=[('id', 'in', Eval('allowed_contacts', [])),],
+        context={
+                'company': Eval('company', -1),
+            },
+        depends=['allowed_contacts', 'company'],
+        required=True)
     allowed_contacts = fields.Function(fields.Many2Many('party.party',
             None, None, 'Allowed Contacts',
             context={
@@ -40,15 +41,28 @@ class Work(metaclass=PoolMeta):
             },
             depends=['company']),
         'on_change_with_allowed_contacts')
-    contacts = fields.Many2Many('project.work-party.party', 'work',
-        'party', 'Contacts',
-        domain=[
-            ('id', 'in', Eval('allowed_contacts', [])),
-            ],
-        context={
-                'company': Eval('company', -1),
-            },
-        depends=['allowed_contacts', 'company'])
+    company = fields.Many2One('company.company', "Company", required=True)
+
+
+    @fields.depends('_parent_work.id', '_parent_work.party', 'work', 'company',
+                    'party')
+    def on_change_with_allowed_contacts(self, name=None):
+        pool = Pool()
+        Employee = pool.get('company.employee')
+        res = [e.party.id for e in Employee.search([])]
+        if self.work:
+            if self.work.party:
+                res.extend(r.to.id for r in self.work.party.relations)
+        return res
+
+    @classmethod
+    def default_company(cls):
+        return Transaction().context.get('company')
+
+class Work(metaclass=PoolMeta):
+    __name__ = "project.work"
+
+    contacts = fields.One2Many('project.work-party.party', 'work', 'Contacts',)
 
     @classmethod
     def __setup__(cls):
@@ -78,16 +92,6 @@ class Work(metaclass=PoolMeta):
         return {
             'project': self.parent.id if self.parent else None,
             }
-
-    @fields.depends('party', 'company', '_parent_party.id')
-    def on_change_with_allowed_contacts(self, name=None):
-        pool = Pool()
-        Employee = pool.get('company.employee')
-        res = [e.party.id for e in Employee.search([])]
-        if not self.party:
-            return res
-        res.extend(r.to.id for r in self.party.relations)
-        return res
 
     @staticmethod
     def get_mail_fields():
@@ -129,7 +133,8 @@ class Work(metaclass=PoolMeta):
                 if not uid.send_own_changes]
             employees = set(employees) - set(discard_employees)
 
-        for party in self.contacts:
+        for contact in self.contacts:
+            party = contact.party
             if party.id in employees:
                 to_addr.append(party.email)
 
@@ -304,7 +309,8 @@ class Work(metaclass=PoolMeta):
                                 one2many_list)
 
             for work in records:
-                for party in work.contacts:
+                for contact in work.contacts:
+                    party = contact.party
                     to_addr.append(party.email)
             args.extend((records, values))
 
@@ -343,7 +349,8 @@ class Work(metaclass=PoolMeta):
                 if not uid.send_own_changes]
             employees = set(employees) - set(discard_employees)
 
-        for party in self.contacts:
+        for contact in self.contacts:
+            party = contact.party
             if party.id in employees:
                 to_addr.append(party.email)
 
