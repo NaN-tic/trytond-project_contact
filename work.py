@@ -421,7 +421,7 @@ class Work(metaclass=PoolMeta):
 
         msg = MIMEText(body, 'html',_charset='utf-8')
         msg['From'] = FROM_ADDR
-        msg['To'] = to_addr
+        msg['To'] = ', '.join(to_addr)
         msg['Subject'] = Header(u'Summary of %s' % self.rec_name, 'utf-8')
 
         url = urlparse(url)
