@@ -25,5 +25,12 @@
                 pyson="1"/>
             <field name="rule_group" ref="rule_group_work_party_companies"/>
         </record>
+
+        <!-- Contact sequence -->
+        <record model="ir.ui.view" id="contact_work_view_list_sequence">
+            <field name="model">project.work-party.party</field>
+            <field name="type">tree</field>
+            <field name="name">contact_work_list_sequence</field>
+        </record>
     </data>
 </tryton>

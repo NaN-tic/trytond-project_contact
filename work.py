@@ -49,8 +49,10 @@ class WorkParty(sequence_ordered(), ModelView, ModelSQL):
     def on_change_with_allowed_contacts(self, name=None):
         pool = Pool()
         Employee = pool.get('company.employee')
-        res = [e.party.id for e in Employee.search([])]
+        res = []
         if self.work:
+            res = [e.party.id for e in Employee.search(
+                ['company', '=', self.work.company.id])]
             if self.work.party:
                 res.extend(r.to.id for r in self.work.party.relations)
         return res
