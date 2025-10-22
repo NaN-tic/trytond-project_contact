@@ -41,7 +41,8 @@ class WorkParty(sequence_ordered(), ModelView, ModelSQL):
             },
             depends=['company']),
         'on_change_with_allowed_contacts')
-    company = fields.Many2One('company.company', "Company", required=True)
+    company = fields.Function(fields.Many2One('company.company', "Company"),
+                              'get_company', searcher='search_company')
 
 
     @fields.depends('_parent_work.id', '_parent_work.party', 'work', 'company',
@@ -57,9 +58,13 @@ class WorkParty(sequence_ordered(), ModelView, ModelSQL):
                 res.extend(r.to.id for r in self.work.party.relations)
         return res
 
+    def get_company(self, name):
+        return self.work.company if self.work else None
+
     @classmethod
-    def default_company(cls):
-        return Transaction().context.get('company')
+    def search_company(cls, name, clause):
+        return [('work.%s' % name,) + tuple(clause[1:])]
+
 
 class Work(metaclass=PoolMeta):
     __name__ = "project.work"
