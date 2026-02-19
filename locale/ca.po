@@ -2,13 +2,17 @@
 msgid ""
 msgstr "Content-Type: text/plain; charset=utf-8\n"
 
-msgctxt "field:project.work,allowed_contacts:"
-msgid "Allowed Contacts"
-msgstr "Contactes permesos"
-
 msgctxt "field:project.work,contacts:"
 msgid "Contacts"
 msgstr "Contactes"
+
+msgctxt "field:project.work-party.party,allowed_contacts:"
+msgid "Allowed Contacts"
+msgstr "Contactes permesos"
+
+msgctxt "field:project.work-party.party,company:"
+msgid "Company"
+msgstr "Empresa"
 
 msgctxt "field:project.work-party.party,party:"
 msgid "Party"
