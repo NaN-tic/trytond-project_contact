@@ -280,6 +280,7 @@ class Work(metaclass=PoolMeta):
     def write(cls, *args):
         pool = Pool()
         ModelData = pool.get('ir.model.data')
+        SummaryContacts = pool.get('project.work.summary_contacts')
 
         actions = iter(args)
         args = []
@@ -328,14 +329,17 @@ class Work(metaclass=PoolMeta):
                     old_values[record.id]))
 
         for work in ready_to_send_summary:
-            work.send_summary_mail()
+            to_addr.extend(SummaryContacts.get_mail())
+            pattern = work.get_summary_contacts_pattern()
+            to_addr = SummaryContacts.compute(pattern)
+            work.send_summary_mail(to_addr)
 
     def get_summary_contacts_pattern(self):
         return {
             'project': self.parent.id if self.parent else None,
             }
 
-    def get_summary_mail(self):
+    def get_summary_mail(self, to_addr):
         '''
         Return Mail object or None if there are no recipients
         '''
@@ -438,19 +442,20 @@ class Work(metaclass=PoolMeta):
         msg['In-Reply-To'] = "<{}@{}>".format(self.id, url.netloc)
         return msg
 
-    def send_summary_mail(self):
-        msg = self.get_summary_mail()
+    def send_summary_mail(self, to_addr):
+        msg = self.get_summary_mail(to_addr)
         if msg and msg['To']:
-            to_addr = [x.strip() for x in msg['To'].split(',')]
-            sendmail_transactional(msg['From'], to_addr, msg)
+            sendmail_transactional(msg['From'], msg['To'], msg)
 
     def send_mail(self, msg):
         if msg and msg['To']:
-            to_addr = [x.strip() for x in msg['To'].split(',')]
-            sendmail_transactional(msg['From'], to_addr, msg)
+            sendmail_transactional(msg['From'], msg['To'], msg)
 
     @classmethod
     @ModelView.button
     def send_summary(cls, works):
+        SummaryContacts = Pool().get('project.work.summary_contacts')
+        to_addr = []
+        to_addr.extend(SummaryContacts.get_mail())
         for work in works:
-            work.send_summary_mail()
+            work.send_summary_mail(to_addr)
