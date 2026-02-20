@@ -4,7 +4,7 @@
 <data>
     <xpath expr="/form/notebook" position="inside">
         <page name="contacts">
-            <field name="contacts" colspan="4"/>
+            <field name="contacts" colspan="4" height="300"/>
         </page>
     </xpath>
 </data>
