@@ -421,8 +421,49 @@ class Work(metaclass=PoolMeta):
         msg['Subject'] = Header(u'Summary of %s' % self.rec_name, 'utf-8')
 
         url = urlparse(url)
-        msg['In-Reply-To'] = "<{}@{}>".format(self.id, url.netloc)
+        reply_to = self._get_last_activity_message_id(prefer_received=True)
+        if reply_to:
+            msg['In-Reply-To'] = reply_to
+        else:
+            msg['In-Reply-To'] = "<{}@{}>".format(self.id, url.netloc)
         return msg
+
+    def _get_last_activity_message_id(self, prefer_received=False):
+        Activity = Pool().get('activity.activity')
+        resource_ref = 'project.work,%s' % self.id
+        activities = Activity.search([
+            ('resource', '=', resource_ref),
+            ['OR',
+                ('mail', '!=', None),
+                ('origin', 'ilike', 'electronic.mail,%'),
+                ],
+            ], order=[('dtstart', 'DESC'), ('id', 'DESC')])
+        if not activities:
+            return
+
+        def get_message_id(activity):
+            origin = activity.origin
+            if origin and getattr(origin, '__name__', None) == 'electronic.mail':
+                message_id = getattr(origin, 'message_id', None)
+                if message_id:
+                    return message_id
+            mail = activity.mail
+            if mail:
+                return getattr(mail, 'message_id', None)
+
+        if prefer_received:
+            for activity in activities:
+                origin = activity.origin
+                if origin and getattr(origin, '__name__', None) == 'electronic.mail':
+                    if getattr(origin, 'flag_received', False):
+                        message_id = get_message_id(activity)
+                        if message_id:
+                            return message_id
+
+        for activity in activities:
+            message_id = get_message_id(activity)
+            if message_id:
+                return message_id
 
     def send_summary_mail(self):
         msg = self.get_summary_mail()
