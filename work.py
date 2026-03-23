@@ -142,8 +142,9 @@ class Work(metaclass=PoolMeta):
 
         for contact in self.contacts:
             party = contact.party
-            if party.id in employees:
+            if party.id in employees and party.email:
                 to_addr.append(party.email)
+        to_addr = list(set(to_addr))
 
         if not to_addr:
             return
@@ -273,7 +274,9 @@ class Work(metaclass=PoolMeta):
         records = super(Work, cls).create(vlist)
         for record in records:
             for values in vlist:
-                record.send_mail(record.get_mail())
+                email = record.get_mail()
+                if email:
+                    record.send_mail(email)
         return records
 
     @classmethod
@@ -324,8 +327,9 @@ class Work(metaclass=PoolMeta):
 
         actions = iter(args)
         for record in check_in_email_fields:
-            record.send_mail(record.get_mail(one2many_values,
-                    old_values[record.id]))
+            email = record.get_mail(one2many_values, old_values[record.id])
+            if email:
+                record.send_mail(email)
 
         for work in ready_to_send_summary:
             work.send_summary_mail()
