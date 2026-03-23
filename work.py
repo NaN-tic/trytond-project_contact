@@ -358,9 +358,10 @@ class Work(metaclass=PoolMeta):
 
         for contact in self.contacts:
             party = contact.party
-            if party.id in employees:
+            if party.id in employees and party.email:
                 to_addr.append(party.email)
 
+        to_addr = list(set(to_addr))
         if not to_addr:
             return
 
