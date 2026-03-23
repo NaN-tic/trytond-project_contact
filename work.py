@@ -446,12 +446,14 @@ class Work(metaclass=PoolMeta):
         msg = self.get_summary_mail()
         if msg and msg['To']:
             to_addr = [x.strip() for x in msg['To'].split(',')]
-            sendmail_transactional(msg['From'], to_addr, msg)
+            if to_addr:
+                sendmail_transactional(msg['From'], to_addr, msg)
 
     def send_mail(self, msg):
         if msg and msg['To']:
             to_addr = [x.strip() for x in msg['To'].split(',')]
-            sendmail_transactional(msg['From'], to_addr, msg)
+            if to_addr:
+                sendmail_transactional(msg['From'], to_addr, msg)
 
     @classmethod
     @ModelView.button
