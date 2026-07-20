@@ -13,7 +13,7 @@ from trytond.model import ModelSQL, ModelView, fields, sequence_ordered
 from trytond.pool import Pool, PoolMeta
 from trytond.pyson import Eval
 from trytond.sendmail import sendmail_transactional
-from trytond.config import config
+import trytond.config as config
 from trytond.transaction import Transaction
 
 __all__ = ['WorkParty', 'Work']
