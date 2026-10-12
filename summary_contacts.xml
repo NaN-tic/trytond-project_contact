@@ -29,6 +29,6 @@ this repository contains the full copyright notices and license terms. -->
       <field name="view" ref="summary_contacts_view_form"/>
       <field name="act_window" ref="act_summary_contacts_title"/>
     </record>
-    <menuitem id="menu_summary_contacts" parent="project.menu_configuration" sequence="1" icon="tryton-list" action="act_summary_contacts_title"/>
+    <menuitem id="menu_summary_contacts" parent="project.menu_configuration" sequence="20" icon="tryton-list" action="act_summary_contacts_title"/>
   </data>
 </tryton>

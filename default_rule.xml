@@ -29,6 +29,6 @@ this repository contains the full copyright notices and license terms. -->
       <field name="view" ref="default_rule_view_form"/>
       <field name="act_window" ref="act_default_rule_title"/>
     </record>
-    <menuitem id="menu_default_rule" parent="project.menu_configuration" sequence="1" icon="tryton-list" action="act_default_rule_title"/>
+    <menuitem id="menu_default_rule" parent="project.menu_configuration" sequence="20" icon="tryton-list" action="act_default_rule_title"/>
   </data>
 </tryton>
